@@ -36,8 +36,14 @@ export function setWorkers(state, playerId, workers) {
             return false;
         }
     });
+
     if (newPlayer) {
-        newPlayer = newPlayer.set('workers', workers);
+        var newWorkers = workers;
+        workers.some(function(worker, index){
+            newWorkers = newWorkers.set(index, worker.set('playerId', playerId));
+            return false;
+        });
+        newPlayer = newPlayer.set('workers', newWorkers);
         players = players.set(playerIndex, newPlayer);
         return state.set('players', players);
     } else {
@@ -69,15 +75,13 @@ export function addWorker(state, playerId, newWorker) {
         while (ids.has(newId)) {
             newId++;
         }
-        var updated = selectedPlayer.set('workers', selectedWorkers.push(newWorker.set('id', newId)));
+        var updated = selectedPlayer.set('workers', selectedWorkers.push(newWorker.set('id', newId).set('playerId', playerId)));
         players = players.set(playerIndex, updated);
         return state.set('players', players);
     } else {
         return state;
     }
 }
-
-// TODO: add playerId reference to worker
 
 // TODO: setWorkerJob
 

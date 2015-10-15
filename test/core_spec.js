@@ -88,7 +88,7 @@ describe('application logic', () => {
             }));
         });
     });
-
+    // TODO: Update test names to include attaching playerId
     describe('setWorkers', () => {
         it('assigns a set of workers to a player without workers', () => {
             const state = fromJS({
@@ -121,10 +121,12 @@ describe('application logic', () => {
                         workers: [
                             {
                                 id: 1,
+                                playerId: 1,
                                 name: 'Bob'
                             },
                             {
                                 id: 2,
+                                playerId: 1,
                                 name: 'Dora'
                             }
                         ]
@@ -142,10 +144,12 @@ describe('application logic', () => {
                         workers: [
                             {
                                 id: 1,
+                                playerId: 1,
                                 name: 'Tonk'
                             },
                             {
                                 id: 2,
+                                playerId: 1,
                                 name: 'Alice'
                             }
                         ]
@@ -174,10 +178,12 @@ describe('application logic', () => {
                         workers: [
                             {
                                 id: 3,
+                                playerId: 1,
                                 name: 'Bob'
                             },
                             {
                                 id: 4,
+                                playerId: 1,
                                 name: 'Dora'
                             }
                         ]
@@ -195,10 +201,12 @@ describe('application logic', () => {
                         workers: [
                             {
                                 id: 1,
+                                playerId: 1,
                                 name: 'Tonk'
                             },
                             {
                                 id: 2,
+                                playerId: 1,
                                 name: 'Alice'
                             }
                         ]
@@ -227,10 +235,12 @@ describe('application logic', () => {
                         workers: [
                             {
                                 id: 1,
+                                playerId: 1,
                                 name: 'Tonk'
                             },
                             {
                                 id: 2,
+                                playerId: 1,
                                 name: 'Alice'
                             }
                         ]
@@ -239,7 +249,7 @@ describe('application logic', () => {
             }));
         });
     });
-
+    // TODO: Update test names to include attaching playerId
     describe('addWorker', () => {
         it('adds a worker with the smallest unique id >zero to a player without workers', () => {
             const state = fromJS({
@@ -263,6 +273,7 @@ describe('application logic', () => {
                         workers: [
                             {
                                 id: 1,
+                                playerId: 1,
                                 name: 'Bob'
                             }
                         ]
@@ -280,10 +291,12 @@ describe('application logic', () => {
                         workers: [
                             {
                                 id: 1,
+                                playerId: 1,
                                 name: 'Bob'
                             },
                             {
                                 id: 3,
+                                playerId: 1,
                                 name: 'Bobby'
                             }
                         ]
@@ -303,14 +316,17 @@ describe('application logic', () => {
                         workers: [
                             {
                                 id: 1,
+                                playerId: 1,
                                 name: 'Bob'
                             },
                             {
                                 id: 3,
+                                playerId: 1,
                                 name: 'Bobby'
                             },
                             {
                                 id: 2,
+                                playerId: 1,
                                 name: 'Bob'
                             }
                         ]
