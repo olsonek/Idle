@@ -4,30 +4,49 @@
 import {List, Map, Set, fromJS} from 'immutable';
 import {getPlayer, getWorker, setWorker} from './internal';
 
-// TODO: Rewrite core methods to fit the spec.
 // TODO: Merge "internal" method dependencies into core methods via the new spec
 // TODO: Define metrics for valid usernames
 export function setPlayer(state, player) {
     let players = state.get('players', List());
-    if(player.get('id')){
-        // update existing player
-    }else{
-        // create a new player
-    }
-    var ids = Set();
-    var exists = players.some(function (p) {
-        ids = ids.add(player.get('id'));
-        return p.get('username') === player.get('username');
-    });
-    if (!exists) {
-        var newId = 1;
-        while (ids.has(newId)) {
-            newId++;
+    if (player.get('id')) {// update existing player
+        var index = undefined;
+        var oldPlayer = undefined;
+        var isUniqueUsername = true;
+        players.some(function (p, i) {
+            if (p.get('id') === player.get('id')) {
+                index = i;
+                oldPlayer = p;
+                return false;
+            } else if (p.get('username') === player.get('username')) {
+                isUniqueUsername = false;
+                return true;
+            }
+            else {
+                return false;
+            }
+        });
+        if (index !== undefined && isUniqueUsername) {
+            return state.set('players', players.set(index, oldPlayer.merge(player)));
+        } else {
+            return state;
         }
-        var addPlayer = player.set('id', newId);
-        return state.set('players', players.push(addPlayer));
-    } else {
-        return state;
+    }
+    else {// create a new player
+        var ids = Set();
+        var exists = players.some(function (p) {
+            ids = ids.add(p.get('id'));
+            return p.get('username') === player.get('username');
+        });
+        if (!exists) {
+            var newId = 1;
+            while (ids.has(newId)) {
+                newId++;
+            }
+            var addPlayer = player.set('id', newId);
+            return state.set('players', players.push(addPlayer));
+        } else {
+            return state;
+        }
     }
 }
 
@@ -69,9 +88,9 @@ export function addWorker(state, playerId, newWorker) {
 // TODO: removeWorkerAction() upon changing jobs
 export function setWorkerJob(state, playerId, workerId, job) {
     var player = getPlayer(state, playerId);
-    if(player) {
+    if (player) {
         var worker = getWorker(player, workerId);
-        if(worker){
+        if (worker) {
             worker = worker.set('job', job);
             player = setWorker(player, worker);
             return setPlayer(state, player);

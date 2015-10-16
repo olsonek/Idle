@@ -4,7 +4,7 @@
 import {expect} from 'chai';
 import {List, Map, fromJS} from 'immutable';
 
-import {addPlayer, addWorker, getTask, setWorkerJob, setWorkers, setWorkerTask} from '../src/core'
+import {setPlayer, addWorker, getTask, setWorkerJob, setWorkers, setWorkerTask} from '../src/core'
 
 describe('application logic', () => {
     describe('Player Operations', () => {
@@ -25,7 +25,7 @@ describe('application logic', () => {
                 const player = Map({
                     username: 'Logan'
                 });
-                const nextState = addPlayer(state, player);
+                const nextState = setPlayer(state, player);
                 expect(nextState).to.equal(fromJS({
                     players: [
                         {
@@ -75,7 +75,7 @@ describe('application logic', () => {
                     id: 3,
                     username: 'Bobby'
                 });
-                const nextState = addPlayer(state, player);
+                const nextState = setPlayer(state, player);
                 expect(nextState).to.equal(fromJS({
                     players: [
                         {
@@ -108,7 +108,7 @@ describe('application logic', () => {
                     username: 'Eddie',
                     hairColor: 'Black'
                 });
-                const nextState = addPlayer(state, player);
+                const nextState = setPlayer(state, player);
                 expect(nextState).to.equal(fromJS({
                     players: [
                         {
@@ -141,7 +141,7 @@ describe('application logic', () => {
                     id: 1,
                     hairColor: 'Black'
                 });
-                const nextState = addPlayer(state, player);
+                const nextState = setPlayer(state, player);
                 expect(nextState).to.equal(fromJS({
                     players: [
                         {
@@ -175,7 +175,7 @@ describe('application logic', () => {
                     username: 'Allan',
                     why: 'not'
                 });
-                const nextState = addPlayer(state, player);
+                const nextState = setPlayer(state, player);
                 expect(nextState).to.equal(fromJS({
                     players: [
                         {
@@ -206,7 +206,7 @@ describe('application logic', () => {
                 const player = Map({
                     username: 'Eddie'
                 });
-                const nextState = addPlayer(state, player);
+                const nextState = setPlayer(state, player);
                 expect(nextState).to.equal(fromJS({
                     players: [
                         {
@@ -220,6 +220,39 @@ describe('application logic', () => {
                     ]
                 }));
             });
+
+            it('does nothing if the playerId is specified, but a different, existing username is provided', () => {
+                const state = fromJS({
+                    players: [
+                        {
+                            id: 1,
+                            username: 'Eddie'
+                        },
+                        {
+                            id: 3,
+                            username: 'Rob'
+                        }
+                    ]
+                });
+                const player = Map({
+                    id: 3,
+                    username: 'Eddie',
+                    hairColor: 'Brown'
+                });
+                const nextState = setPlayer(state, player);
+                expect(nextState).to.equal(fromJS({
+                    players: [
+                        {
+                            id: 1,
+                            username: 'Eddie'
+                        },
+                        {
+                            id: 3,
+                            username: 'Rob'
+                        }
+                    ]
+                }));
+            })
         });
 
         describe('getPlayer', () => {/* TODO: define getPlayer spec */});
