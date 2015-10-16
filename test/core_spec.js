@@ -82,6 +82,7 @@ describe('application logic', () => {
                     });
                     const nextState = setPlayer(state, player);
                     expect(nextState).to.equal(fromJS({
+                        latestPlayerId: 3,
                         players: [
                             {
                                 id: 1,
@@ -116,6 +117,7 @@ describe('application logic', () => {
                     });
                     const nextState = setPlayer(state, player);
                     expect(nextState).to.equal(fromJS({
+                        latestPlayerId: 3,
                         players: [
                             {
                                 id: 1,
@@ -163,7 +165,7 @@ describe('application logic', () => {
                         ]
                     }));
                 });
-                it('does nothing if the playerId is not specified and the username exists', () => {
+                it('if the playerId is not specified and the username exists', () => {
                     const state = fromJS({
                         players: [
                             {
