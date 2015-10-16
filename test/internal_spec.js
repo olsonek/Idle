@@ -7,3 +7,5 @@ import {List, Map, fromJS} from 'immutable';
 import {getPlayer, setPlayer, getWorker, setWorker} from '../src/internal';
 
 // TODO: Write unit tests for internal methods
+
+// TODO: Determine if internal methods are necessary after core spec rewrite.
