@@ -2,10 +2,11 @@
  * Created by Eddie on 10/14/2015.
  */
 import {List, Map, Set, fromJS} from 'immutable';
+import {getPlayer, setPlayer, getWorker, setWorker} from './internal';
 
 // TODO: Define metrics for valid usernames
 export function addPlayer(state, newPlayer) {
-    let players = state.get('players') || List();
+    let players = state.get('players', List());
     var ids = Set();
     var exists = players.some(function (player) {
         ids = ids.add(player.get('id'));
@@ -24,50 +25,26 @@ export function addPlayer(state, newPlayer) {
 }
 
 export function setWorkers(state, playerId, workers) {
-    var players = state.get('players') || List();
-    var newPlayer = undefined;
-    var playerIndex = undefined;
-    players.some(function (player, index) {
-        if (player.get('id') === playerId) {
-            newPlayer = player;
-            playerIndex = index;
-            return true;
-        } else {
-            return false;
-        }
-    });
-
-    if (newPlayer) {
+    var player = getPlayer(state, playerId);
+    if (player) {
         var newWorkers = workers;
-        workers.some(function(worker, index){
+        workers.some(function (worker, index) {
             newWorkers = newWorkers.set(index, worker.set('playerId', playerId));
             return false;
         });
-        newPlayer = newPlayer.set('workers', newWorkers);
-        players = players.set(playerIndex, newPlayer);
-        return state.set('players', players);
+        player = player.set('workers', newWorkers);
+        return setPlayer(state, player);
     } else {
         return state;
     }
 }
 
 export function addWorker(state, playerId, newWorker) {
-    var players = state.get('players') || List();
-    var selectedPlayer = undefined;
-    var playerIndex = undefined;
-    players.some(function (player, index) {
-        if (player.get('id') === playerId) {
-            selectedPlayer = player;
-            playerIndex = index;
-            return true;
-        } else {
-            return false;
-        }
-    });
-    if (selectedPlayer) {
-        var selectedWorkers = selectedPlayer.get('workers') || List();
+    var player = getPlayer(state, playerId);
+    if (player) {
+        var workers = player.get('workers', List());
         var ids = new Set();
-        selectedWorkers.some(function (worker) {
+        workers.some(function (worker) {
             ids = ids.add(worker.get('id'));
             return false;
         });
@@ -75,20 +52,42 @@ export function addWorker(state, playerId, newWorker) {
         while (ids.has(newId)) {
             newId++;
         }
-        var updated = selectedPlayer.set('workers', selectedWorkers.push(newWorker.set('id', newId).set('playerId', playerId)));
-        players = players.set(playerIndex, updated);
-        return state.set('players', players);
+        var updatedPlayer = player.set('workers', workers.push(newWorker.set('id', newId).set('playerId', playerId)));
+        return setPlayer(state, updatedPlayer);
     } else {
         return state;
     }
 }
 
-// TODO: setWorkerJob
+// TODO: removeWorkerAction() upon changing jobs
+export function setWorkerJob(state, playerId, workerId, job) {
+    var player = getPlayer(state, playerId);
+    if(player) {
+        var worker = getWorker(player, workerId);
+        if(worker){
+            worker = worker.set('job', job);
+            player = setWorker(player, worker);
+            return setPlayer(state, player);
+        }
+    }
+    return state;
+}
 
-// TODO: setWorkerAction, add to an action map
+
+
+
+
+
+
+
+
+
+
+// TODO: setWorkerTask, add to an action map
+//function setWorkerTask(state, playerId, workerId, task)
+
+// TODO: removeWorkerAction, remove from action map
 
 // TODO: addResource
 
 // TODO: procAction, add resource to player based on action map
-
-// TODO: levelUpWorker, add to levels list that maps to job
