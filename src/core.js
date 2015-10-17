@@ -5,21 +5,26 @@ import {List, Map, Set, fromJS} from 'immutable';
 
 // TODO: Merge "internal" method dependencies into core methods via the new spec
 // TODO: Define metrics for valid usernames
-export function setPlayer(state, player) {
+export function setPlayer(state, player, update = false) {
     if (player.get('playerId')) {// update existing player
         if (state.hasIn(['playerData', player.get('playerId').toString()])) {
             if (player.get('username')) {//if specified, ensure it matches original to prevent change
                 player = player.set('username', state.getIn(['playerData',
                     player.get('playerId').toString(), 'username']));
             }
-            return state.mergeDeepIn(['playerData', player.get('playerId').toString()],
-                player.remove('playerId'));
+            if (update) {
+                return state.mergeDeepIn(['playerData', player.get('playerId').toString()],
+                    player.remove('playerId'));
+            } else {
+                return state.setIn(['playerData', player.get('playerId').toString()],
+                    player.remove('playerId'));
+            }
         }
     }
     else if (player.get('username')) {// create a new player
         player = player.set('username', player.get('username').toString());//ensure the username is a string
         if (!state.hasIn(['players', player.get('username')])) {
-            var newId = state.get('latestPlayerId', 0) + 1;
+            var newId = Number(state.get('latestPlayerId', 0)) + 1;
             return state.set('latestPlayerId', newId)//store the latestPlayerId as a number
                 .setIn(['players', player.get('username')], newId.toString())//store the playerId as a string
                 .setIn(['playerData', newId.toString()], player);
@@ -32,9 +37,21 @@ export function getPlayer(state, playerId) {
     return state.getIn(['playerData', playerId.toString()], undefined);
 }
 
+export function updatePlayer(state, player) {
+    return setPlayer(state, player, true);
+}
+
 export function setWorkers(state, playerId, workers) {
     if (state.hasIn(['playerData', playerId.toString()])) {//player exists
-        return state.setIn(['workers', playerId.toString()], workers);
+        var latestWorkerId = 0;
+        workers.keySeq().some(function (workerId) {//calculate new latestWorkerId
+            if (Number(workerId) > latestWorkerId) {
+                latestWorkerId = Number(workerId);
+            }
+            return false;
+        });
+        return state.setIn(['playerData', playerId.toString(), 'latestWorkerId'], latestWorkerId)
+            .setIn(['workers', playerId.toString()], workers);
     } else {//player does not exist
         return state;
     }
@@ -48,24 +65,29 @@ export function getWorkers(state, playerId) {
     }
 }
 
-export function addWorker(state, playerId, newWorker) {
-    var player = getPlayer(state, playerId);
-    if (player) {
-        var workers = player.get('workers', List());
-        var ids = new Set();
-        workers.some(function (worker) {
-            ids = ids.add(worker.get('id'));
-            return false;
-        });
-        var newId = 1;
-        while (ids.has(newId)) {
-            newId++;
+export function setWorker(state, playerId, worker, update = false) {
+    if (state.hasIn(['playerData', playerId.toString()])) {//player exists
+        if (worker.has('workerId')) {//update worker
+            if (state.hasIn(['workers', playerId.toString(), worker.get('workerId').toString()])) {//worker exists
+                if (update) {
+                    return state.mergeDeepIn(['workers', playerId.toString(),
+                        worker.get('workerId').toString()], worker.remove('workerId'));
+                } else {
+                    return state.setIn(['workers', playerId.toString(),
+                        worker.get('workerId').toString()], worker.remove('workerId'));
+                }
+            }
+        } else if (worker) {//create a new worker if defined
+            var newWorkerId = Number(state.getIn(['playerData', playerId.toString(), 'latestWorkerId'], 0)) + 1;
+            return state.setIn(['playerData', playerId.toString(), 'latestWorkerId'], newWorkerId)
+                .setIn(['workers', playerId.toString(), newWorkerId.toString()], worker);
         }
-        var updatedPlayer = player.set('workers', workers.push(newWorker.set('id', newId).set('playerId', playerId)));
-        return setPlayer(state, updatedPlayer);
-    } else {
-        return state;
     }
+    return state;
+}
+
+export function getWorker(state, playerId, workerId) {
+
 }
 
 // TODO: removeWorkerAction() upon changing jobs
