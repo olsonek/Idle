@@ -4,12 +4,14 @@
 import {expect} from 'chai';
 import {List, Map, fromJS} from 'immutable';
 
-import {getPlayer, setPlayer, updatePlayer, getWorkers, setWorkers, setWorker} from '../src/core'
+import {getPlayer, setPlayer, updatePlayer,
+    getWorkers, setWorkers,
+    getWorker, setWorker, updateWorker} from '../src/core'
 
 describe('application logic', () => {
     describe('Player Operations', () => {
-    // TODO: Write setPlayer() tests for update = true vs default (update = false)
-    // TODO: Write updatePlayer() unit tests (alias for setPlayer(*, *, true))
+        // TODO: Write setPlayer() tests for update = true vs default (update = false)
+        // TODO: Write updatePlayer() unit tests (alias for setPlayer(*, *, true))
         describe('setPlayer', () => {
             describe('adds a player with a unique playerId and sets latestPlayerId', () => {
                 it('when no playerId is provided, the username is unique, and there is no player list', () => {
@@ -314,6 +316,7 @@ describe('application logic', () => {
 });
 
 describe('Worker Operations', () => {
+    // TODO: Write updateWorker() unit tests (alias for setWorker(*, *, *, true))
     describe('setWorkers', () => {
         it('associates a set of workers with a player without workers', () => {
             const initialState = fromJS({
@@ -447,7 +450,7 @@ describe('Worker Operations', () => {
                 2: {name: 'Alice'}
             }));
         });
-        it('returns an empty object from a existing player without workers', () => {
+        it('returns undefined if an existing player does not have workers', () => {
             const initialState = fromJS({
                 latestPlayerId: 3,
                 players: {
@@ -464,7 +467,8 @@ describe('Worker Operations', () => {
             });
             const playerId = '1';
             const nextState = getWorkers(initialState, playerId);
-            expect(nextState).to.equal(Map());
+            //noinspection BadExpressionStatementJS
+            expect(nextState).to.be.undefined;
         });
         it('returns undefined if the player does not exist', () => {
             const initialState = fromJS({
@@ -803,8 +807,93 @@ describe('Worker Operations', () => {
             });
         });
     });
-
-    describe('getWorker', () => {/* TODO: define getWorker spec */
+    describe('getWorker', () => {
+        it('retrieves an existing worker if the player exists and the workerId is a number', () => {
+            const initialState = fromJS({
+                latestPlayerId: 3,
+                players: {
+                    'Eddie': '1',
+                    'Rob': '3'
+                },
+                playerData: {
+                    1: {username: 'Eddie', hairColor: 'Black', latestWorkerId: 4},
+                    3: {username: 'Rob', hairColor: 'Black', powerLevel: 'Over 9000', latestWorkerId: 2}
+                },
+                workers: {
+                    1: {3: {name: 'Bob'}, 4: {name: 'Dora'}},
+                    3: {1: {name: 'Tonk'}, 2: {name: 'Alice'}}
+                }
+            });
+            const playerId = '3';
+            const workerId = 2;
+            const nextState = getWorker(initialState, playerId, workerId);
+            expect(nextState).to.equal(fromJS({name: 'Alice'}));
+        });
+        it('retrieves an existing worker if the player exists and the workerId is a string', () => {
+            const initialState = fromJS({
+                latestPlayerId: 3,
+                players: {
+                    'Eddie': '1',
+                    'Rob': '3'
+                },
+                playerData: {
+                    1: {username: 'Eddie', hairColor: 'Black', latestWorkerId: 4},
+                    3: {username: 'Rob', hairColor: 'Black', powerLevel: 'Over 9000', latestWorkerId: 2}
+                },
+                workers: {
+                    1: {3: {name: 'Bob'}, 4: {name: 'Dora'}},
+                    3: {1: {name: 'Tonk'}, 2: {name: 'Alice'}}
+                }
+            });
+            const playerId = '3';
+            const workerId = '2';
+            const nextState = getWorker(initialState, playerId, workerId);
+            expect(nextState).to.equal(fromJS({name: 'Alice'}));
+        });
+        it('returns undefined if the player does not exist', () => {
+            const initialState = fromJS({
+                latestPlayerId: 3,
+                players: {
+                    'Eddie': '1',
+                    'Rob': '3'
+                },
+                playerData: {
+                    1: {username: 'Eddie', hairColor: 'Black', latestWorkerId: 4},
+                    3: {username: 'Rob', hairColor: 'Black', powerLevel: 'Over 9000', latestWorkerId: 2}
+                },
+                workers: {
+                    1: {3: {name: 'Bob'}, 4: {name: 'Dora'}},
+                    3: {1: {name: 'Tonk'}, 2: {name: 'Alice'}}
+                }
+            });
+            const playerId = '7';
+            const workerId = '2';
+            const nextState = getWorker(initialState, playerId, workerId);
+            //noinspection BadExpressionStatementJS
+            expect(nextState).to.be.undefined;
+        });
+        it('returns undefined if the player exists, but the worker does not', () => {
+            const initialState = fromJS({
+                latestPlayerId: 3,
+                players: {
+                    'Eddie': '1',
+                    'Rob': '3'
+                },
+                playerData: {
+                    1: {username: 'Eddie', hairColor: 'Black', latestWorkerId: 4},
+                    3: {username: 'Rob', hairColor: 'Black', powerLevel: 'Over 9000', latestWorkerId: 2}
+                },
+                workers: {
+                    1: {3: {name: 'Bob'}, 4: {name: 'Dora'}},
+                    3: {1: {name: 'Tonk'}, 2: {name: 'Alice'}}
+                }
+            });
+            const playerId = '1';
+            const workerId = '6';
+            const nextState = getWorker(initialState, playerId, workerId);
+            //noinspection BadExpressionStatementJS
+            expect(nextState).to.be.undefined;
+        });
     });
 
     describe('setWorkerJob', () => {

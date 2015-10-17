@@ -3,7 +3,6 @@
  */
 import {List, Map, Set, fromJS} from 'immutable';
 
-// TODO: Merge "internal" method dependencies into core methods via the new spec
 // TODO: Define metrics for valid usernames
 export function setPlayer(state, player, update = false) {
     if (player.get('playerId')) {// update existing player
@@ -58,11 +57,7 @@ export function setWorkers(state, playerId, workers) {
 }
 
 export function getWorkers(state, playerId) {
-    if (state.hasIn(['playerData', playerId.toString()])) {//player exists
-        return state.getIn(['workers', playerId.toString()], Map());
-    } else {//player does not exist
-        return undefined;
-    }
+    return state.getIn(['workers', playerId.toString()], undefined);
 }
 
 export function setWorker(state, playerId, worker, update = false) {
@@ -87,7 +82,11 @@ export function setWorker(state, playerId, worker, update = false) {
 }
 
 export function getWorker(state, playerId, workerId) {
+    return state.getIn(['workers', playerId.toString(), workerId.toString()], undefined);
+}
 
+export function updateWorker(state, playerId, worker) {
+    return setWorker(state, playerId, worker, true);
 }
 
 // TODO: removeWorkerAction() upon changing jobs
