@@ -6,32 +6,28 @@ import {List, Map, Set, fromJS} from 'immutable';
 // TODO: Merge "internal" method dependencies into core methods via the new spec
 // TODO: Define metrics for valid usernames
 export function setPlayer(state, player) {
-    let players = state.get('players', List());
-    if (player.get('id')) {// update existing player
-        var index = undefined;
-        var oldPlayer = undefined;
-        players.some(function (p, i) {
-            if (p.get('id') === player.get('id')) {
-                oldPlayer = p;
-                index = i;
-                return true;
-            }
-            return false;
-        });
-        if (index !== undefined) {
-            player = player.remove('username');
-            return state.set('players', players.set(index, oldPlayer.merge(player)));
+    var players = state.get('players', Map());
+    if (player.get('playerId')) {// update existing player
+        if (player.get('username')) {//if specified, ensure it matches original to prevent change
+            player = player.set('username', state.getIn(['playerData',
+                player.get('playerId').toString(), 'username']));
         }
+        return state.mergeDeepIn(['playerData', player.get('playerId').toString()],
+            player.remove('playerId'));
     }
     else if (player.get('username')) {// create a new player
-        let exists = players.some(function(p){return p.get('username') === player.get('username')});
-        if (!exists) {
+        if (!players.has(player.get('username'))) {
             var newId = state.get('latestPlayerId', 0) + 1;
             return state.set('latestPlayerId', newId)
-                .set('players', players.push(player.set('id', newId)));
+                .setIn(['players', player.get('username')], newId)
+                .setIn(['playerData', newId.toString()], player);
         }
     }
     return state;
+}
+
+export function getPlayer(state, playerId) {
+
 }
 
 export function setWorkers(state, playerId, workers) {
