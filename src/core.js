@@ -6,20 +6,22 @@ import {List, Map, Set, fromJS} from 'immutable';
 // TODO: Merge "internal" method dependencies into core methods via the new spec
 // TODO: Define metrics for valid usernames
 export function setPlayer(state, player) {
-    var players = state.get('players', Map());
     if (player.get('playerId')) {// update existing player
-        if (player.get('username')) {//if specified, ensure it matches original to prevent change
-            player = player.set('username', state.getIn(['playerData',
-                player.get('playerId').toString(), 'username']));
+        if (state.hasIn(['playerData', player.get('playerId').toString()])) {
+            if (player.get('username')) {//if specified, ensure it matches original to prevent change
+                player = player.set('username', state.getIn(['playerData',
+                    player.get('playerId').toString(), 'username']));
+            }
+            return state.mergeDeepIn(['playerData', player.get('playerId').toString()],
+                player.remove('playerId'));
         }
-        return state.mergeDeepIn(['playerData', player.get('playerId').toString()],
-            player.remove('playerId'));
     }
     else if (player.get('username')) {// create a new player
-        if (!players.has(player.get('username'))) {
+        player = player.set('username', player.get('username').toString());//ensure the username is a string
+        if (!state.hasIn(['players', player.get('username')])) {
             var newId = state.get('latestPlayerId', 0) + 1;
-            return state.set('latestPlayerId', newId)
-                .setIn(['players', player.get('username')], newId)
+            return state.set('latestPlayerId', newId)//store the latestPlayerId as a number
+                .setIn(['players', player.get('username')], newId.toString())//store the playerId as a string
                 .setIn(['playerData', newId.toString()], player);
         }
     }
@@ -27,7 +29,7 @@ export function setPlayer(state, player) {
 }
 
 export function getPlayer(state, playerId) {
-
+    return state.getIn(['playerData', playerId.toString()], undefined);
 }
 
 export function setWorkers(state, playerId, workers) {

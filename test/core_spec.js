@@ -19,7 +19,7 @@ describe('application logic', () => {
                     expect(nextState).to.equal(fromJS({
                         latestPlayerId: 1,
                         players: {
-                            'Eddie': 1
+                            'Eddie': '1'
                         },
                         playerData: {
                             1: {username: 'Eddie'}
@@ -30,8 +30,8 @@ describe('application logic', () => {
                     const state = fromJS({
                         latestPlayerId: 3,
                         players: {
-                            'Eddie': 1,
-                            'Rob': 3
+                            'Eddie': '1',
+                            'Rob': '3'
                         },
                         playerData: {
                             1: {username: 'Eddie'},
@@ -45,9 +45,9 @@ describe('application logic', () => {
                     expect(nextState).to.equal(fromJS({
                         latestPlayerId: 4,
                         players: {
-                            'Eddie': 1,
-                            'Rob': 3,
-                            'Logan': 4
+                            'Eddie': '1',
+                            'Rob': '3',
+                            'Logan': '4'
                         },
                         playerData: {
                             1: {username: 'Eddie'},
@@ -60,8 +60,8 @@ describe('application logic', () => {
                     const state = fromJS({
                         latestPlayerId: 3,
                         players: {
-                            'Eddie': 1,
-                            'Rob': 3
+                            'Eddie': '1',
+                            'Rob': '3'
                         },
                         playerData: {
                             1: {username: 'Eddie', hairColor: 'Black'},
@@ -76,9 +76,9 @@ describe('application logic', () => {
                     expect(nextState).to.equal(fromJS({
                         latestPlayerId: 4,
                         players: {
-                            'Eddie': 1,
-                            'Rob': 3,
-                            'Logan': 4
+                            'Eddie': '1',
+                            'Rob': '3',
+                            'Logan': '4'
                         },
                         playerData: {
                             1: {username: 'Eddie', hairColor: 'Black'},
@@ -94,8 +94,68 @@ describe('application logic', () => {
                     const state = fromJS({
                         latestPlayerId: 3,
                         players: {
-                            'Eddie': 1,
-                            'Rob': 3
+                            'Eddie': '1',
+                            'Rob': '3'
+                        },
+                        playerData: {
+                            1: {username: 'Eddie', hairColor: 'Black'},
+                            3: {username: 'Rob', hairColor: 'Brown'}
+                        }
+                    });
+                    const player = Map({
+                        playerId: '3',
+                        hairColor: 'Black',
+                        powerLevel: 'Over 9000'
+                    });
+                    const nextState = setPlayer(state, player);
+                    expect(nextState).to.equal(fromJS({
+                        latestPlayerId: 3,
+                        players: {
+                            'Eddie': '1',
+                            'Rob': '3'
+                        },
+                        playerData: {
+                            1: {username: 'Eddie', hairColor: 'Black'},
+                            3: {username: 'Rob', hairColor: 'Black', powerLevel: 'Over 9000'}
+                        }
+                    }));
+                });
+                it('when the playerId is specified (and exists) with any provided username', () => {
+                    const state = fromJS({
+                        latestPlayerId: 3,
+                        players: {
+                            'Eddie': '1',
+                            'Rob': '3'
+                        },
+                        playerData: {
+                            1: {username: 'Eddie'},
+                            3: {username: 'Rob'}
+                        }
+                    });
+                    const player = Map({
+                        playerId: '3',
+                        username: 'Bobby',
+                        hairColor: 'Black'
+                    });
+                    const nextState = setPlayer(state, player);
+                    expect(nextState).to.equal(fromJS({
+                        latestPlayerId: 3,
+                        players: {
+                            'Eddie': '1',
+                            'Rob': '3'
+                        },
+                        playerData: {
+                            1: {username: 'Eddie'},
+                            3: {username: 'Rob', hairColor: 'Black'}
+                        }
+                    }));
+                });
+                it('when the playerId is specified (and exists) as a number instead of a string', () => {
+                    const state = fromJS({
+                        latestPlayerId: 3,
+                        players: {
+                            'Eddie': '1',
+                            'Rob': '3'
                         },
                         playerData: {
                             1: {username: 'Eddie', hairColor: 'Black'},
@@ -111,42 +171,12 @@ describe('application logic', () => {
                     expect(nextState).to.equal(fromJS({
                         latestPlayerId: 3,
                         players: {
-                            'Eddie': 1,
-                            'Rob': 3
+                            'Eddie': '1',
+                            'Rob': '3'
                         },
                         playerData: {
                             1: {username: 'Eddie', hairColor: 'Black'},
                             3: {username: 'Rob', hairColor: 'Black', powerLevel: 'Over 9000'}
-                        }
-                    }));
-                });
-                it('when the playerId is specified (and exists) with any provided username', () => {
-                    const state = fromJS({
-                        latestPlayerId: 3,
-                        players: {
-                            'Eddie': 1,
-                            'Rob': 3
-                        },
-                        playerData: {
-                            1: {username: 'Eddie'},
-                            3: {username: 'Rob'}
-                        }
-                    });
-                    const player = Map({
-                        playerId: 3,
-                        username: 'Bobby',
-                        hairColor: 'Black'
-                    });
-                    const nextState = setPlayer(state, player);
-                    expect(nextState).to.equal(fromJS({
-                        latestPlayerId: 3,
-                        players: {
-                            'Eddie': 1,
-                            'Rob': 3
-                        },
-                        playerData: {
-                            1: {username: 'Eddie'},
-                            3: {username: 'Rob', hairColor: 'Black'}
                         }
                     }));
                 });
@@ -155,8 +185,8 @@ describe('application logic', () => {
                 it('if the playerId is specified, but does not exist', () => {
                     const state = fromJS({
                         players: {
-                            'Eddie': 1,
-                            'Rob': 2
+                            'Eddie': '1',
+                            'Rob': '2'
                         },
                         playerData: {
                             1: {username: 'Eddie'},
@@ -171,8 +201,8 @@ describe('application logic', () => {
                     const nextState = setPlayer(state, player);
                     expect(nextState).to.equal(fromJS({
                         players: {
-                            'Eddie': 1,
-                            'Rob': 2
+                            'Eddie': '1',
+                            'Rob': '2'
                         },
                         playerData: {
                             1: {username: 'Eddie'},
@@ -183,8 +213,8 @@ describe('application logic', () => {
                 it('if the playerId is not specified and the username exists', () => {
                     const state = fromJS({
                         players: {
-                            'Eddie': 1,
-                            'Rob': 2
+                            'Eddie': '1',
+                            'Rob': '2'
                         },
                         playerData: {
                             1: {username: 'Eddie'},
@@ -197,8 +227,8 @@ describe('application logic', () => {
                     const nextState = setPlayer(state, player);
                     expect(nextState).to.equal(fromJS({
                         players: {
-                            'Eddie': 1,
-                            'Rob': 2
+                            'Eddie': '1',
+                            'Rob': '2'
                         },
                         playerData: {
                             1: {username: 'Eddie'},
