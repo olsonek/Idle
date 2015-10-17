@@ -33,10 +33,18 @@ export function getPlayer(state, playerId) {
 }
 
 export function setWorkers(state, playerId, workers) {
-    if(state.hasIn(['playerData', playerId.toString()])){//player exists
+    if (state.hasIn(['playerData', playerId.toString()])) {//player exists
         return state.setIn(['workers', playerId.toString()], workers);
-    }else{//player does not exist
+    } else {//player does not exist
         return state;
+    }
+}
+
+export function getWorkers(state, playerId) {
+    if (state.hasIn(['playerData', playerId.toString()])) {//player exists
+        return state.getIn(['workers', playerId.toString()], Map());
+    } else {//player does not exist
+        return undefined;
     }
 }
 

@@ -4,7 +4,7 @@
 import {expect} from 'chai';
 import {List, Map, fromJS} from 'immutable';
 
-import {getPlayer, setPlayer, addWorker, getTask, setWorkerJob, setWorkers, setWorkerTask} from '../src/core'
+import {getPlayer, setPlayer, getWorkers, setWorkers} from '../src/core'
 
 describe('application logic', () => {
     describe('Player Operations', () => {
@@ -390,7 +390,71 @@ describe('Worker Operations', () => {
         });
     });
 
-    describe('getWorkers', () => {/* TODO: define getWorkers spec */
+    describe('getWorkers', () => {
+        it('retrieves a set of workers from an existing player with workers', () => {
+            const initialState = fromJS({
+                latestPlayerId: 3,
+                players: {
+                    'Eddie': '1',
+                    'Rob': '3'
+                },
+                playerData: {
+                    1: {username: 'Eddie', hairColor: 'Black'},
+                    3: {username: 'Rob', hairColor: 'Black', powerLevel: 'Over 9000'}
+                },
+                workers: {
+                    1: {3: {name: 'Bob'}, 4: {name: 'Dora'}},
+                    3: {1: {name: 'Tonk'}, 2: {name: 'Alice'}}
+                }
+            });
+            const playerId = '3';
+            const nextState = getWorkers(initialState, playerId);
+            expect(nextState).to.equal(fromJS({
+                1: {name: 'Tonk'},
+                2: {name: 'Alice'}
+            }));
+        });
+
+        it('returns an empty object from a existing player without workers', () => {
+            const initialState = fromJS({
+                latestPlayerId: 3,
+                players: {
+                    'Eddie': '1',
+                    'Rob': '3'
+                },
+                playerData: {
+                    1: {username: 'Eddie', hairColor: 'Black'},
+                    3: {username: 'Rob', hairColor: 'Black', powerLevel: 'Over 9000'}
+                },
+                workers: {
+                    3: {1: {name: 'Tonk'}, 2: {name: 'Alice'}}
+                }
+            });
+            const playerId = '1';
+            const nextState = getWorkers(initialState, playerId);
+            expect(nextState).to.equal(Map());
+        });
+
+        it('returns undefined if the player does not exist', () => {
+            const initialState = fromJS({
+                latestPlayerId: 3,
+                players: {
+                    'Eddie': '1',
+                    'Rob': '3'
+                },
+                playerData: {
+                    1: {username: 'Eddie', hairColor: 'Black'},
+                    3: {username: 'Rob', hairColor: 'Black', powerLevel: 'Over 9000'}
+                },
+                workers: {
+                    3: {1: {name: 'Tonk'}, 2: {name: 'Alice'}}
+                }
+            });
+            const playerId = '5';
+            const nextState = getWorkers(initialState, playerId);
+            //noinspection BadExpressionStatementJS
+            expect(nextState).to.be.undefined;
+        });
     });
 
     describe('setWorker', () => {// TODO: modify the addWorker spec to fit a setWorker spec
