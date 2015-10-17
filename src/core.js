@@ -33,16 +33,9 @@ export function getPlayer(state, playerId) {
 }
 
 export function setWorkers(state, playerId, workers) {
-    var player = getPlayer(state, playerId);
-    if (player) {
-        var newWorkers = workers;
-        workers.some(function (worker, index) {
-            newWorkers = newWorkers.set(index, worker.set('playerId', playerId));
-            return false;
-        });
-        player = player.set('workers', newWorkers);
-        return setPlayer(state, player);
-    } else {
+    if(state.hasIn(['playerData', playerId.toString()])){//player exists
+        return state.setIn(['workers', playerId.toString()], workers);
+    }else{//player does not exist
         return state;
     }
 }
