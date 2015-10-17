@@ -7,10 +7,8 @@ import {List, Map, Set, fromJS} from 'immutable';
 export function setPlayer(state, player, update = false) {
     if (player.get('playerId')) {// update existing player
         if (state.hasIn(['playerData', player.get('playerId').toString()])) {
-            if (player.get('username')) {//if specified, ensure it matches original to prevent change
-                player = player.set('username', state.getIn(['playerData',
-                    player.get('playerId').toString(), 'username']));
-            }
+            player = player.set('username', state.getIn(['playerData',//assign original username to new player data
+                player.get('playerId').toString(), 'username']));
             if (update) {
                 return state.mergeDeepIn(['playerData', player.get('playerId').toString()],
                     player.remove('playerId'));

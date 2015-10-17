@@ -10,8 +10,6 @@ import {getPlayer, setPlayer, updatePlayer,
 
 describe('application logic', () => {
     describe('Player Operations', () => {
-        // TODO: Write setPlayer() tests for update = true vs default (update = false)
-        // TODO: Write updatePlayer() unit tests (alias for setPlayer(*, *, true))
         describe('setPlayer', () => {
             describe('adds a player with a unique playerId and sets latestPlayerId', () => {
                 it('when no playerId is provided, the username is unique, and there is no player list', () => {
@@ -135,7 +133,7 @@ describe('application logic', () => {
                         },
                         playerData: {
                             1: {username: 'Eddie', hairColor: 'Black'},
-                            3: {username: 'Rob', hairColor: 'Brown'}
+                            3: {username: 'Rob', hairColor: 'Brown', much: 'Wow'}
                         }
                     });
                     const player = Map({
@@ -152,7 +150,7 @@ describe('application logic', () => {
                         },
                         playerData: {
                             1: {username: 'Eddie', hairColor: 'Black'},
-                            3: {username: 'Rob', hairColor: 'Black', powerLevel: 'Over 9000'}
+                            3: {username: 'Rob', hairColor: 'Black', much: 'Wow', powerLevel: 'Over 9000'}
                         }
                     }));
                 });
@@ -165,7 +163,7 @@ describe('application logic', () => {
                         },
                         playerData: {
                             1: {username: 'Eddie'},
-                            3: {username: 'Rob'}
+                            3: {username: 'Rob', much: 'Wow'}
                         }
                     });
                     const player = Map({
@@ -182,11 +180,11 @@ describe('application logic', () => {
                         },
                         playerData: {
                             1: {username: 'Eddie'},
-                            3: {username: 'Rob', hairColor: 'Black'}
+                            3: {username: 'Rob', much: 'Wow', hairColor: 'Black'}
                         }
                     }));
                 });
-                it('when the playerId is specified (and exists) as a number instead of a string and update is true', () => {
+                it('when the playerId is specified as a number (and exists) and update is true', () => {
                     const initialState = fromJS({
                         latestPlayerId: 3,
                         players: {
@@ -195,7 +193,7 @@ describe('application logic', () => {
                         },
                         playerData: {
                             1: {username: 'Eddie', hairColor: 'Black'},
-                            3: {username: 'Rob', hairColor: 'Brown'}
+                            3: {username: 'Rob', much: 'Wow', hairColor: 'Brown'}
                         }
                     });
                     const player = Map({
@@ -204,6 +202,98 @@ describe('application logic', () => {
                         powerLevel: 'Over 9000'
                     });
                     const nextState = setPlayer(initialState, player, true);
+                    expect(nextState).to.equal(fromJS({
+                        latestPlayerId: 3,
+                        players: {
+                            'Eddie': '1',
+                            'Rob': '3'
+                        },
+                        playerData: {
+                            1: {username: 'Eddie', hairColor: 'Black'},
+                            3: {username: 'Rob', much: 'Wow', hairColor: 'Black', powerLevel: 'Over 9000'}
+                        }
+                    }));
+                });
+            });
+            describe('replaces player data other than the username', () => {
+                it('when the playerId is specified (and exists) without a provided username and update is false', () => {
+                    const initialState = fromJS({
+                        latestPlayerId: 3,
+                        players: {
+                            'Eddie': '1',
+                            'Rob': '3'
+                        },
+                        playerData: {
+                            1: {username: 'Eddie', hairColor: 'Black'},
+                            3: {username: 'Rob', hairColor: 'Brown', much: 'Wow'}
+                        }
+                    });
+                    const player = Map({
+                        playerId: '3',
+                        hairColor: 'Black',
+                        powerLevel: 'Over 9000'
+                    });
+                    const nextState = setPlayer(initialState, player, false);
+                    expect(nextState).to.equal(fromJS({
+                        latestPlayerId: 3,
+                        players: {
+                            'Eddie': '1',
+                            'Rob': '3'
+                        },
+                        playerData: {
+                            1: {username: 'Eddie', hairColor: 'Black'},
+                            3: {username: 'Rob', hairColor: 'Black', powerLevel: 'Over 9000'}
+                        }
+                    }));
+                });
+                it('when the playerId is specified (and exists) with any provided username and update is false', () => {
+                    const initialState = fromJS({
+                        latestPlayerId: 3,
+                        players: {
+                            'Eddie': '1',
+                            'Rob': '3'
+                        },
+                        playerData: {
+                            1: {username: 'Eddie'},
+                            3: {username: 'Rob', much: 'Wow'}
+                        }
+                    });
+                    const player = Map({
+                        playerId: '3',
+                        username: 'Bobby',
+                        hairColor: 'Black'
+                    });
+                    const nextState = setPlayer(initialState, player, false);
+                    expect(nextState).to.equal(fromJS({
+                        latestPlayerId: 3,
+                        players: {
+                            'Eddie': '1',
+                            'Rob': '3'
+                        },
+                        playerData: {
+                            1: {username: 'Eddie'},
+                            3: {username: 'Rob', hairColor: 'Black'}
+                        }
+                    }));
+                });
+                it('when the playerId is specified (and exists) as a number instead of a string and update is false', () => {
+                    const initialState = fromJS({
+                        latestPlayerId: 3,
+                        players: {
+                            'Eddie': '1',
+                            'Rob': '3'
+                        },
+                        playerData: {
+                            1: {username: 'Eddie', hairColor: 'Black'},
+                            3: {username: 'Rob', hairColor: 'Brown', much: 'Wow'}
+                        }
+                    });
+                    const player = Map({
+                        playerId: 3,
+                        hairColor: 'Black',
+                        powerLevel: 'Over 9000'
+                    });
+                    const nextState = setPlayer(initialState, player, false);
                     expect(nextState).to.equal(fromJS({
                         latestPlayerId: 3,
                         players: {
@@ -312,11 +402,72 @@ describe('application logic', () => {
                 expect(nextState).to.be.undefined;
             });
         });
+        describe('updatePlayer', () => {
+            it('replaces overlapping specified fields and adds new data', () => {
+                const initialState = fromJS({
+                    latestPlayerId: 3,
+                    players: {
+                        'Eddie': '1',
+                        'Rob': '3'
+                    },
+                    playerData: {
+                        1: {username: 'Eddie', hairColor: 'Black'},
+                        3: {username: 'Rob', hairColor: 'Brown'}
+                    }
+                });
+                const player = Map({
+                    playerId: '3',
+                    hairColor: 'Black',
+                    powerLevel: 'Over 9000'
+                });
+                const nextState = updatePlayer(initialState, player);
+                expect(nextState).to.equal(fromJS({
+                    latestPlayerId: 3,
+                    players: {
+                        'Eddie': '1',
+                        'Rob': '3'
+                    },
+                    playerData: {
+                        1: {username: 'Eddie', hairColor: 'Black'},
+                        3: {username: 'Rob', hairColor: 'Black', powerLevel: 'Over 9000'}
+                    }
+                }));
+            });
+            it('merges with pre-existing fields that are not specified', () => {
+                const initialState = fromJS({
+                    latestPlayerId: 3,
+                    players: {
+                        'Eddie': '1',
+                        'Rob': '3'
+                    },
+                    playerData: {
+                        1: {username: 'Eddie', hairColor: 'Black'},
+                        3: {username: 'Rob', hairColor: 'Brown', much: 'Wow'}
+                    }
+                });
+                const player = Map({
+                    playerId: '3',
+                    hairColor: 'Black',
+                    powerLevel: 'Over 9000'
+                });
+                const nextState = updatePlayer(initialState, player);
+                expect(nextState).to.equal(fromJS({
+                    latestPlayerId: 3,
+                    players: {
+                        'Eddie': '1',
+                        'Rob': '3'
+                    },
+                    playerData: {
+                        1: {username: 'Eddie', hairColor: 'Black'},
+                        3: {username: 'Rob', hairColor: 'Black', much: 'Wow', powerLevel: 'Over 9000'}
+                    }
+                }));
+            });
+        });
     });
 });
 
 describe('Worker Operations', () => {
-    // TODO: Write updateWorker() unit tests (alias for setWorker(*, *, *, true))
     describe('setWorkers', () => {
         it('associates a set of workers with a player without workers', () => {
             const initialState = fromJS({
@@ -895,6 +1046,87 @@ describe('Worker Operations', () => {
             expect(nextState).to.be.undefined;
         });
     });
+    describe('updateWorker', () => {
+        it('replaces overlapping specified fields and adds new data', () => {
+            const initialState = fromJS({
+                latestPlayerId: 3,
+                players: {
+                    'Eddie': '1',
+                    'Rob': '3'
+                },
+                playerData: {
+                    1: {username: 'Eddie', hairColor: 'Black', latestWorkerId: 4},
+                    3: {username: 'Rob', hairColor: 'Black', powerLevel: 'Over 9000'}
+                },
+                workers: {
+                    1: {3: {name: 'Bob'}, 4: {name: 'Bob', job: 'Builder'}},
+                    3: {1: {name: 'Tonk'}, 2: {name: 'Alice'}}
+                }
+            });
+            const playerId = '1';
+            const worker = fromJS({
+                workerId: '4',
+                name: 'Sal',
+                job: 'Programmer',
+                likes: 'Tattoos'
+            });
+            const nextState = updateWorker(initialState, playerId, worker);
+            expect(nextState).to.equal(fromJS({
+                latestPlayerId: 3,
+                players: {
+                    'Eddie': '1',
+                    'Rob': '3'
+                },
+                playerData: {
+                    1: {username: 'Eddie', hairColor: 'Black', latestWorkerId: 4},
+                    3: {username: 'Rob', hairColor: 'Black', powerLevel: 'Over 9000'}
+                },
+                workers: {
+                    1: {3: {name: 'Bob'}, 4: {name: 'Sal', job: 'Programmer', likes: 'Tattoos'}},
+                    3: {1: {name: 'Tonk'}, 2: {name: 'Alice'}}
+                }
+            }));
+        });
+        it('merges with pre-existing fields that are not specified', () => {
+            const initialState = fromJS({
+                latestPlayerId: 3,
+                players: {
+                    'Eddie': '1',
+                    'Rob': '3'
+                },
+                playerData: {
+                    1: {username: 'Eddie', hairColor: 'Black', latestWorkerId: 4},
+                    3: {username: 'Rob', hairColor: 'Black', powerLevel: 'Over 9000'}
+                },
+                workers: {
+                    1: {3: {name: 'Bob'}, 4: {name: 'Bob', job: 'Builder'}},
+                    3: {1: {name: 'Tonk'}, 2: {name: 'Alice'}}
+                }
+            });
+            const playerId = '1';
+            const worker = fromJS({
+                workerId: '4',
+                name: 'Sal',
+                likes: 'Tattoos'
+            });
+            const nextState = updateWorker(initialState, playerId, worker);
+            expect(nextState).to.equal(fromJS({
+                latestPlayerId: 3,
+                players: {
+                    'Eddie': '1',
+                    'Rob': '3'
+                },
+                playerData: {
+                    1: {username: 'Eddie', hairColor: 'Black', latestWorkerId: 4},
+                    3: {username: 'Rob', hairColor: 'Black', powerLevel: 'Over 9000'}
+                },
+                workers: {
+                    1: {3: {name: 'Bob'}, 4: {name: 'Sal', job: 'Builder', likes: 'Tattoos'}},
+                    3: {1: {name: 'Tonk'}, 2: {name: 'Alice'}}
+                }
+            }));
+        });
+    });
 
     describe('setWorkerJob', () => {
         it('assigns a job to a jobless worker that belongs to the player', () => {
@@ -1017,7 +1249,6 @@ describe('Worker Operations', () => {
             }));
         });
     });
-
     describe('getWorkerJob', () => {/* TODO: define getWorkerJob spec */
     });
 });
