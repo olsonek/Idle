@@ -87,20 +87,25 @@ export function updateWorker(state, playerId, worker) {
     return setWorker(state, playerId, worker, true);
 }
 
-// TODO: removeWorkerAction() upon changing jobs
 export function setWorkerJob(state, playerId, workerId, job) {
-    var player = getPlayer(state, playerId);
-    if (player) {
-        var worker = getWorker(player, workerId);
-        if (worker) {
-            worker = worker.set('job', job);
-            player = setWorker(player, worker);
-            return setPlayer(state, player);
-        }
+    if (job && state.hasIn(['workers', playerId.toString(), workerId.toString()])) {
+        return state.setIn(['workers', playerId.toString(), workerId.toString(), 'job'], job);
+    } else {
+        return state;
     }
-    return state;
 }
 
+export function getWorkerJob(state, playerId, workerId) {
+    return state.getIn(['workers', playerId.toString(), workerId.toString(), 'job'], undefined);
+}
+
+export function removeWorkerJob(state, playerId, workerId) {
+    if (state.hasIn(['workers', playerId.toString(), workerId.toString()])) {
+        return state.removeIn(['workers', playerId.toString(), workerId.toString(), 'job']);
+    } else {
+        return state;
+    }
+}
 
 // TODO: setWorkerTask, add to an action map
 //function setWorkerTask(state, playerId, workerId, task)
