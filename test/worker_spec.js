@@ -8,6 +8,7 @@ import {getWorkers, setWorkers,
     getWorker, setWorker, updateWorker, removeWorker} from '../src/worker';
 
 describe('Worker Operations', () => {
+    // TODO: Write tests for validating latestWorkerId
     describe('setWorkers', () => {
         it('associates a set of workers with a player without workers', () => {
             const initialState = fromJS({

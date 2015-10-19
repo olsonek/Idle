@@ -7,6 +7,7 @@ import {List, Map, fromJS} from 'immutable';
 import {getPlayer, setPlayer, updatePlayer} from '../src/player';
 
 describe('Player Operations', () => {
+    // TODO: Write tests to validate latestPlayerId
     // TODO: Add method playerExists(state, playerId): boolean and adjust core methods to use it
     describe('setPlayer', () => {
         describe('adds a player with a unique playerId and sets latestPlayerId', () => {
