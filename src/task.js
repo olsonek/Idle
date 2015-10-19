@@ -16,7 +16,7 @@ export function removeTask(state, playerId, workerId) {
 }
 
 export function setTask(state, playerId, workerId, task) {
-    if (isQualified(state.getIn(['workers', playerId.toString(), workerId.toString(), 'job']), task)) {
+    if (isQualifiedForTask(state.getIn(['workers', playerId.toString(), workerId.toString(), 'job']), task)) {
         var oldTask = getTask(state, playerId, workerId);
         if (oldTask) {
             state = removeFromTasks(state, playerId, workerId, oldTask);
@@ -35,9 +35,9 @@ export function removeFromTasks(state, playerId, workerId, task) {
     if (state.getIn(['tasks', task, playerId.toString()], List()).includes(workerId.toString())) {
         state = state.removeIn(['tasks', task, playerId.toString()], workerId.toString());
         if (state.hasIn(['tasks', task]) &&
-            state.getIn(['tasks', task]).count() === 0) {
+            state.getIn(['tasks', task]).count() === 0) {// if no workers on a particular task
             state = state.removeIn(['tasks', task]);
-            if (state.get('tasks', List()).count() === 0) {
+            if (state.get('tasks', List()).count() === 0) {// if no workers on any task
                 state = state.remove('tasks');
             }
         }
@@ -45,7 +45,7 @@ export function removeFromTasks(state, playerId, workerId, task) {
     return state;
 }
 
-export function isQualified(job, task) {
+export function isQualifiedForTask(job, task) {
     return Boolean(job && job.length > 0
         && task && task.length > 0);
 }

@@ -4,7 +4,7 @@
 import {expect} from 'chai';
 import {List, Map, fromJS} from 'immutable';
 
-import {getJob, setJob, removeJob} from '../src/job';
+import {getJob, setJob, removeJob, isQualified} from '../src/job';
 
 describe('Job Operations', () => {
     describe('setJob', () => {
@@ -433,6 +433,11 @@ describe('Job Operations', () => {
                     3: {1: {name: 'Tonk'}, 2: {name: 'Alice'}}
                 }
             }));
+        });
+    });
+    describe('isQualifiedForJob', () => {// TODO: Finish spec & implementation for isQualified() and adjust setJob() to call it.
+        it('returns true if the worker exists and the job is defined and not empty', () => {
+
         });
     });
 });

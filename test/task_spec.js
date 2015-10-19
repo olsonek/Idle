@@ -6,7 +6,7 @@ import {List, Map, fromJS} from 'immutable';
 
 import {getTask, removeTask, setTask,
     addToTasks, removeFromTasks,
-    isQualified} from '../src/task';
+    isQualifiedForTaskForTask} from '../src/task';
 
 describe('Task Operations', () => {
     describe('addToTasks', () => {
@@ -225,40 +225,40 @@ describe('Task Operations', () => {
             }));
         })
     });
-    describe('isQualified', () => {
+    describe('isQualifiedForTaskForTask', () => {
         // TODO: Create a Job => Task map and qualify from it
         it('returns true if the job and task are defined and not empty', () => {
             const job = 'Miner';
             const task = 'Break Rocks';
-            const nextState = isQualified(job, task);
+            const nextState = isQualifiedForTask(job, task);
             //noinspection BadExpressionStatementJS
             expect(nextState).to.be.true;
         });
         it('returns false if the job is undefined', () => {
             const job = undefined;
             const task = 'Break Rocks';
-            const nextState = isQualified(job, task);
+            const nextState = isQualifiedForTask(job, task);
             //noinspection BadExpressionStatementJS
             expect(nextState).to.be.false;
         });
         it('returns false if the job is empty', () => {
             const job = '';
             const task = 'Break Rocks';
-            const nextState = isQualified(job, task);
+            const nextState = isQualifiedForTask(job, task);
             //noinspection BadExpressionStatementJS
             expect(nextState).to.be.false;
         });
         it('returns false if the task is undefined', () => {
             const job = 'Miner';
             const task = undefined;
-            const nextState = isQualified(job, task);
+            const nextState = isQualifiedForTask(job, task);
             //noinspection BadExpressionStatementJS
             expect(nextState).to.be.false;
         });
         it('returns false if the task is empty', () => {
             const job = 'Miner';
             const task = '';
-            const nextState = isQualified(job, task);
+            const nextState = isQualifiedForTask(job, task);
             //noinspection BadExpressionStatementJS
             expect(nextState).to.be.false;
         });

@@ -5,10 +5,9 @@ import {expect} from 'chai';
 import {List, Map, fromJS} from 'immutable';
 
 import {getWorkers, setWorkers,
-    getWorker, setWorker, updateWorker} from '../src/worker';
+    getWorker, setWorker, updateWorker, removeWorker} from '../src/worker';
 
 describe('Worker Operations', () => {
-    // TODO: add removeWorker() spec
     describe('setWorkers', () => {
         it('associates a set of workers with a player without workers', () => {
             const initialState = fromJS({
@@ -666,6 +665,211 @@ describe('Worker Operations', () => {
                     3: {1: {name: 'Tonk'}, 2: {name: 'Alice'}}
                 }
             }));
+        });
+    });
+    describe('removeWorker', () => {
+        it('removes a worker that belongs to a player', () => {
+            const initialState = fromJS({
+                latestPlayerId: 3,
+                players: {
+                    'Eddie': '1',
+                    'Rob': '3'
+                },
+                playerData: {
+                    1: {username: 'Eddie', hairColor: 'Black', latestWorkerId: 4},
+                    3: {username: 'Rob', hairColor: 'Black', powerLevel: 'Over 9000'}
+                },
+                workers: {
+                    1: {3: {name: 'Bob'}, 4: {name: 'Dora'}}
+                }
+            });
+            const playerId = '1';
+            const workerId = '4';
+            const nextState = removeWorker(initialState, playerId, workerId);
+            expect(nextState).to.equal(fromJS({
+                latestPlayerId: 3,
+                players: {
+                    'Eddie': '1',
+                    'Rob': '3'
+                },
+                playerData: {
+                    1: {username: 'Eddie', hairColor: 'Black', latestWorkerId: 4},
+                    3: {username: 'Rob', hairColor: 'Black', powerLevel: 'Over 9000'}
+                },
+                workers: {
+                    1: {3: {name: 'Bob'}}
+                }
+            }));
+        });
+        it('if the last worker a player has is removed, remove the worker list for that player', () => {
+            const initialState = fromJS({
+                latestPlayerId: 3,
+                players: {
+                    'Eddie': '1',
+                    'Rob': '3'
+                },
+                playerData: {
+                    1: {username: 'Eddie', hairColor: 'Black', latestWorkerId: 4},
+                    3: {username: 'Rob', hairColor: 'Black', powerLevel: 'Over 9000', latestWorkerId: 7}
+                },
+                workers: {
+                    1: {3: {name: 'Bob'}, 4: {name: 'Dora'}},
+                    3: {6: {name: 'James'}}
+                }
+            });
+            const playerId = '3';
+            const workerId = '6';
+            const nextState = removeWorker(initialState, playerId, workerId);
+            expect(nextState).to.equal(fromJS({
+                latestPlayerId: 3,
+                players: {
+                    'Eddie': '1',
+                    'Rob': '3'
+                },
+                playerData: {
+                    1: {username: 'Eddie', hairColor: 'Black', latestWorkerId: 4},
+                    3: {username: 'Rob', hairColor: 'Black', powerLevel: 'Over 9000', latestWorkerId: 7}
+                },
+                workers: {
+                    1: {3: {name: 'Bob'}, 4: {name: 'Dora'}}
+                }
+            }));
+        });
+        it('if the last worker is removed, remove the entire worker state', () => {
+            const initialState = fromJS({
+                latestPlayerId: 3,
+                players: {
+                    'Eddie': '1',
+                    'Rob': '3'
+                },
+                playerData: {
+                    1: {username: 'Eddie', hairColor: 'Black', latestWorkerId: 4},
+                    3: {username: 'Rob', hairColor: 'Black', powerLevel: 'Over 9000', latestWorkerId: 7}
+                },
+                workers: {
+                    3: {6: {name: 'James'}}
+                }
+            });
+            const playerId = '3';
+            const workerId = '6';
+            const nextState = removeWorker(initialState, playerId, workerId);
+            expect(nextState).to.equal(fromJS({
+                latestPlayerId: 3,
+                players: {
+                    'Eddie': '1',
+                    'Rob': '3'
+                },
+                playerData: {
+                    1: {username: 'Eddie', hairColor: 'Black', latestWorkerId: 4},
+                    3: {username: 'Rob', hairColor: 'Black', powerLevel: 'Over 9000', latestWorkerId: 7}
+                }
+            }));
+        });
+        it('does nothing if the worker does not exist', () => {
+            const initialState = fromJS({
+                latestPlayerId: 3,
+                players: {
+                    'Eddie': '1',
+                    'Rob': '3'
+                },
+                playerData: {
+                    1: {username: 'Eddie', hairColor: 'Black', latestWorkerId: 4},
+                    3: {username: 'Rob', hairColor: 'Black', powerLevel: 'Over 9000', latestWorkerId: 7}
+                },
+                workers: {
+                    1: {3: {name: 'Bob'}, 4: {name: 'Dora'}},
+                    3: {6: {name: 'James'}}
+                }
+            });
+            const playerId = '3';
+            const workerId = '7';
+            const nextState = removeWorker(initialState, playerId, workerId);
+            expect(nextState).to.equal(fromJS({
+                latestPlayerId: 3,
+                players: {
+                    'Eddie': '1',
+                    'Rob': '3'
+                },
+                playerData: {
+                    1: {username: 'Eddie', hairColor: 'Black', latestWorkerId: 4},
+                    3: {username: 'Rob', hairColor: 'Black', powerLevel: 'Over 9000', latestWorkerId: 7}
+                },
+                workers: {
+                    1: {3: {name: 'Bob'}, 4: {name: 'Dora'}},
+                    3: {6: {name: 'James'}}
+                }
+            }));
+        });
+        it('does nothing if the player does not have any workers', () => {
+            const initialState = fromJS({
+                latestPlayerId: 3,
+                players: {
+                    'Eddie': '1',
+                    'Rob': '3'
+                },
+                playerData: {
+                    1: {username: 'Eddie', hairColor: 'Black', latestWorkerId: 4},
+                    3: {username: 'Rob', hairColor: 'Black', powerLevel: 'Over 9000', latestWorkerId: 7}
+                },
+                workers: {
+                    1: {3: {name: 'Bob'}, 4: {name: 'Dora'}}
+                }
+            });
+            const playerId = '3';
+            const workerId = '1';
+            const nextState = removeWorker(initialState, playerId, workerId);
+            expect(nextState).to.equal(fromJS({
+                latestPlayerId: 3,
+                players: {
+                    'Eddie': '1',
+                    'Rob': '3'
+                },
+                playerData: {
+                    1: {username: 'Eddie', hairColor: 'Black', latestWorkerId: 4},
+                    3: {username: 'Rob', hairColor: 'Black', powerLevel: 'Over 9000', latestWorkerId: 7}
+                },
+                workers: {
+                    1: {3: {name: 'Bob'}, 4: {name: 'Dora'}}
+                }
+            }));
+        });
+        it('does nothing if the player does not exist', () => {
+            const initialState = fromJS({
+                latestPlayerId: 3,
+                players: {
+                    'Eddie': '1',
+                    'Rob': '3'
+                },
+                playerData: {
+                    1: {username: 'Eddie', hairColor: 'Black', latestWorkerId: 4},
+                    3: {username: 'Rob', hairColor: 'Black', powerLevel: 'Over 9000', latestWorkerId: 7}
+                },
+                workers: {
+                    1: {3: {name: 'Bob'}, 4: {name: 'Dora'}},
+                    3: {6: {name: 'James'}}
+                }
+            });
+            const playerId = '2';
+            const workerId = '1';
+            const nextState = removeWorker(initialState, playerId, workerId);
+            expect(nextState).to.equal(fromJS({
+                latestPlayerId: 3,
+                players: {
+                    'Eddie': '1',
+                    'Rob': '3'
+                },
+                playerData: {
+                    1: {username: 'Eddie', hairColor: 'Black', latestWorkerId: 4},
+                    3: {username: 'Rob', hairColor: 'Black', powerLevel: 'Over 9000', latestWorkerId: 7}
+                },
+                workers: {
+                    1: {3: {name: 'Bob'}, 4: {name: 'Dora'}},
+                    3: {6: {name: 'James'}}
+                }
+            }));
+        });
+        it('removes the task assigned to a worker before removing the worker', () => {
+
         });
     });
 });

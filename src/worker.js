@@ -3,6 +3,8 @@
  */
 import {List, Map, Set, fromJS} from 'immutable';
 
+import {removeTask} from './task';
+
 export function setWorkers(state, playerId, workers) {
     if (state.hasIn(['playerData', playerId.toString()])) {//player exists
         var latestWorkerId = 0;
@@ -52,3 +54,17 @@ export function updateWorker(state, playerId, worker) {
     return setWorker(state, playerId, worker, true);
 }
 
+export function removeWorker(state, playerId, workerId) {
+    if (state.hasIn(['workers', playerId.toString(), workerId.toString()])) {
+        state = removeTask(state, playerId, workerId);
+        state = state.removeIn(['workers', playerId.toString(), workerId.toString()]);
+        if (state.hasIn(['workers', playerId.toString()]) &&
+            state.getIn(['workers', playerId.toString()]).count() === 0) {// if player has no workers
+            state = state.removeIn(['workers', playerId.toString()]);
+            if (state.get('workers', List()).count() === 0) {// if no workers exist
+                state = state.remove('workers');
+            }
+        }
+    }
+    return state;
+}
