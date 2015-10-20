@@ -661,7 +661,6 @@ describe('Batch Resource Operations', () => {
                 ore: 0
             };
             const nextState = setResources(initialState, playerId, resources);
-            console.log(nextState);
             expect(nextState).to.equal(fromJS({
                 latestPlayerId: 3,
                 players: {
