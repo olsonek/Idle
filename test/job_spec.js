@@ -4,12 +4,12 @@
 import {expect} from 'chai';
 import {List, Map, fromJS} from 'immutable';
 
-import {getJob, setJob, removeJob, isQualified} from '../src/job';
+import {getJob, setJob, removeJob, isQualifiedForJob} from '../src/job';
 
 describe('Job Operations', () => {
+    // TODO: Implement a system for determining accumulated job experience (e.g. experience and levels)
     describe('setJob', () => {
-        // TODO: Create logic for validating jobs (including worker qualification for advanced jobs)
-        it('assigns a job to a jobless worker that belongs to the player', () => {
+        it('assigns a job to a worker that belongs to the player if qualified', () => {
             const initialState = fromJS({
                 latestPlayerId: 3,
                 players: {
@@ -45,7 +45,7 @@ describe('Job Operations', () => {
                 }
             }));
         });
-        it('replaces the job of an employed worker that belongs to the player', () => {
+        it('replaces the job of a worker that belongs to the player if qualified', () => {
             const initialState = fromJS({
                 latestPlayerId: 3,
                 players: {
@@ -435,9 +435,99 @@ describe('Job Operations', () => {
             }));
         });
     });
-    describe('isQualifiedForJob', () => {// TODO: Finish spec & implementation for isQualified() and adjust setJob() to call it.
+    describe('isQualifiedForJob', () => {
+        // TODO: Implement more advanced job requirements
         it('returns true if the worker exists and the job is defined and not empty', () => {
-
+            const initialState = fromJS({
+                latestPlayerId: 3,
+                players: {
+                    'Eddie': '1',
+                    'Rob': '3'
+                },
+                playerData: {
+                    1: {username: 'Eddie', hairColor: 'Black', latestWorkerId: 4},
+                    3: {username: 'Rob', hairColor: 'Black', powerLevel: 'Over 9000', latestWorkerId: 2}
+                },
+                workers: {
+                    1: {3: {name: 'Bobby'}, 4: {name: 'Bob', job: 'Builder'}},
+                    3: {1: {name: 'Tonk'}, 2: {name: 'Alice'}}
+                }
+            });
+            const playerId = '1';
+            const workerId = '3';
+            const job = 'Miner';
+            const nextState = isQualifiedForJob(initialState, playerId, workerId, job);
+            //noinspection BadExpressionStatementJS
+            expect(nextState).to.be.true;
+        });
+        it('returns false if the worker exists and the job is undefined', () => {
+            const initialState = fromJS({
+                latestPlayerId: 3,
+                players: {
+                    'Eddie': '1',
+                    'Rob': '3'
+                },
+                playerData: {
+                    1: {username: 'Eddie', hairColor: 'Black', latestWorkerId: 4},
+                    3: {username: 'Rob', hairColor: 'Black', powerLevel: 'Over 9000', latestWorkerId: 2}
+                },
+                workers: {
+                    1: {3: {name: 'Bobby'}, 4: {name: 'Bob', job: 'Builder'}},
+                    3: {1: {name: 'Tonk'}, 2: {name: 'Alice'}}
+                }
+            });
+            const playerId = '1';
+            const workerId = '3';
+            const job = undefined;
+            const nextState = isQualifiedForJob(initialState, playerId, workerId, job);
+            //noinspection BadExpressionStatementJS
+            expect(nextState).to.be.false;
+        });
+        it('returns false if the worker exists and the job is empty', () => {
+            const initialState = fromJS({
+                latestPlayerId: 3,
+                players: {
+                    'Eddie': '1',
+                    'Rob': '3'
+                },
+                playerData: {
+                    1: {username: 'Eddie', hairColor: 'Black', latestWorkerId: 4},
+                    3: {username: 'Rob', hairColor: 'Black', powerLevel: 'Over 9000', latestWorkerId: 2}
+                },
+                workers: {
+                    1: {3: {name: 'Bobby'}, 4: {name: 'Bob', job: 'Builder'}},
+                    3: {1: {name: 'Tonk'}, 2: {name: 'Alice'}}
+                }
+            });
+            const playerId = '1';
+            const workerId = '3';
+            const job = '';
+            const nextState = isQualifiedForJob(initialState, playerId, workerId, job);
+            //noinspection BadExpressionStatementJS
+            expect(nextState).to.be.false;
+        });
+        it('returns false if the worker does not exist', () => {
+            const initialState = fromJS({
+                latestPlayerId: 3,
+                players: {
+                    'Eddie': '1',
+                    'Rob': '3'
+                },
+                playerData: {
+                    1: {username: 'Eddie', hairColor: 'Black', latestWorkerId: 4},
+                    3: {username: 'Rob', hairColor: 'Black', powerLevel: 'Over 9000', latestWorkerId: 2}
+                },
+                workers: {
+                    1: {3: {name: 'Bobby'}, 4: {name: 'Bob', job: 'Builder'}},
+                    3: {1: {name: 'Tonk'}, 2: {name: 'Alice'}}
+                }
+            });
+            const playerId = '1';
+            const workerId = '2';
+            const job = 'Miner';
+            const nextState = isQualifiedForJob(initialState, playerId, workerId, job);
+            //noinspection BadExpressionStatementJS
+            expect(nextState).to.be.false;
         });
     });
 });

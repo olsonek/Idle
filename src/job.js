@@ -3,7 +3,7 @@
  */
 
 export function setJob(state, playerId, workerId, job) {
-    if (job && state.hasIn(['workers', playerId.toString(), workerId.toString()])) {
+    if (isQualifiedForJob(state, playerId, workerId, job)) {
         return state.setIn(['workers', playerId.toString(), workerId.toString(), 'job'], job);
     } else {
         return state;
@@ -20,4 +20,11 @@ export function removeJob(state, playerId, workerId) {
     } else {
         return state;
     }
+}
+
+export function isQualifiedForJob(state, playerId, workerId, job) {
+    if (job && job.length > 0) {
+        return state.hasIn(['workers', playerId.toString(), workerId.toString()]);
+    }
+    return false;
 }
