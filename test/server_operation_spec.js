@@ -4,8 +4,9 @@
 import {expect} from 'chai';
 import {List, Map, fromJS} from 'immutable';
 
+import {} from '../src/server_operation';
 
-describe('Event Operations', () => {
-    describe('triggerTask', () => {
+describe('Server Operations', () => {
+    describe('applyActionByTask', () => {
     });
 });

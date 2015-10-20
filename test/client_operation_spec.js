@@ -4,7 +4,7 @@
 import {expect} from 'chai';
 import {List, Map, fromJS} from 'immutable';
 
-import {} from '../src/core'
+import {} from '../src/client_operation'
 
 // General Project TODOs
 // TODO: Decouple most operations from player existence checking to allow for operations on smaller state subsets
