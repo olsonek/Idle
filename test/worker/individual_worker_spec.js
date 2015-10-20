@@ -7,8 +7,6 @@ import {List, Map, fromJS} from 'immutable';
 import {getWorker, setWorker, updateWorker, removeWorker} from '../../src/worker';
 
 describe('Individual Worker Operations', () => {
-
-
     describe('setWorker', () => {
         describe('creates a worker', () => {
             it('when the workerId is not specified and the player without workers exists', () => {
