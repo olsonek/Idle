@@ -6,7 +6,7 @@ import {List, Map, fromJS} from 'immutable';
 
 import {getTask, removeTask, setTask,
     addToTasks, removeFromTasks,
-    isQualifiedForTaskForTask} from '../src/task';
+    isQualifiedForTask} from '../src/task';
 
 describe('Task Operations', () => {
     describe('addToTasks', () => {
