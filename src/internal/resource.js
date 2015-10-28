@@ -4,25 +4,20 @@
 import {List, Map} from 'immutable';
 
 export function addResources(state, playerId, resources) {
-    if (state.hasIn(['playerData', playerId.toString()])) {
-        var items = Map(resources);
-        items.some(function (amount, resource) {
-            state = addResource(state, playerId, resource, amount);
-            return false;
-        });
-    }
-    return state
+    var items = Map(resources);
+    items.some(function (amount, resource) {
+        state = addResource(state, playerId, resource, amount);
+        return false;
+    });
+    return state;
 }
 
 export function getResources(state, playerId) {
-    if (state.hasIn(['playerData', playerId.toString()])) {
-        return state.getIn(['resources', playerId.toString()], Map());
-    }
-    return undefined;
+    return state.getIn(['resources', playerId.toString()], Map());
 }
 
 export function hasResources(state, playerId, resources) {
-    var output = state.hasIn(['playerData', playerId.toString()]);
+    var output = true;
     var items = Map(resources);
     items.some(function (amount, resource) {
         output = output && hasResource(state, playerId, resource, amount);
@@ -32,105 +27,75 @@ export function hasResources(state, playerId, resources) {
 }
 
 export function removeResources(state, playerId, resources) {
-    if (state.hasIn(['playerData', playerId.toString()])) {
-        var items = Map(resources);
-        items.some(function (amount, resource) {
-            state = removeResource(state, playerId, resource, amount);
-            return false;
-        });
-    }
+    var items = Map(resources);
+    items.some(function (amount, resource) {
+        state = removeResource(state, playerId, resource, amount);
+        return false;
+    });
     return state;
 }
 
 export function setResources(state, playerId, resources) {
-    if (state.hasIn(['playerData', playerId.toString()])) {
-        state = state.removeIn(['resources', playerId.toString()]);
-        var items = Map(resources);
-        items.some(function (amount, resource) {
-            state = setResource(state, playerId, resource, amount);
-            return false;
-        });
-        if (state.get('resources', Map()).count() === 0) {
-            state = state.remove('resources');
-        }
+    state = state.removeIn(['resources', playerId.toString()]);
+    var items = Map(resources);
+    items.some(function (amount, resource) {
+        state = setResource(state, playerId, resource, amount);
+        return false;
+    });
+    if (state.get('resources', Map()).count() === 0) {
+        state = state.remove('resources');
     }
     return state;
 }
 
 export function addResource(state, playerId, resource, amount) {
-    if (state.hasIn(['playerData', playerId.toString()])) {
-        if (resource && resource.length > 0) {
-            if (amount > 0) {
-                state = state.setIn(['resources', playerId.toString(), resource],
-                    getResource(state, playerId, resource) + amount);
-            }
+    if (resource !== undefined && amount !== undefined) {
+        if (amount >= 0) {
+            state = state.setIn(['resources', playerId.toString(), resource],
+                getResource(state, playerId, resource) + amount);
+        } else {
+            state = removeResource(state, playerId, resource, Math.abs(amount));
         }
     }
     return state;
 }
 
 export function getResource(state, playerId, resource) {
-    if (state.hasIn(['playerData', playerId.toString()])) {
-        if (resource && resource.length > 0) {
-            return state.getIn(['resources', playerId.toString(), resource], 0);
-        } else {
-            return undefined;
-        }
-    } else {
-        return undefined;
-    }
+    return state.getIn(['resources', playerId.toString(), resource], 0);
 }
 
 export function hasResource(state, playerId, resource, amount) {
-    if (state.hasIn(['playerData', playerId.toString()])) {
-        if (resource && resource.length > 0) {
-            if (amount < 0) {
-                return false;
-            } else {
-                return state.getIn(['resources', playerId.toString(), resource], 0) >= amount;
-            }
-        } else {
-            return false;
-        }
+    if (resource !== undefined && amount !== undefined && amount >= 0) {
+        return state.getIn(['resources', playerId.toString(), resource], 0) >= amount;
     } else {
         return false;
     }
 }
 
 export function setResource(state, playerId, resource, amount) {
-    if (state.hasIn(['playerData', playerId.toString()])) {
-        if (resource && resource.length > 0) {
-            if (amount > 0) {
-                state = state.setIn(['resources', playerId.toString(), resource], amount);
-            } else {
-                state = state.removeIn(['resources', playerId.toString(), resource]);
-                if (state.getIn(['resources', playerId.toString()], Map()).count() === 0) {
-                    state = state.removeIn(['resources', playerId.toString()]);
-                    if (state.get('resources', Map()).count() === 0) {
-                        state = state.remove('resources');
-                    }
-                }
-            }
+    if (resource !== undefined) {
+        if (amount !== undefined && amount > 0) {
+            state = state.setIn(['resources', playerId.toString(), resource], amount);
+        } else {
+            state = removeResource(state, playerId, resource);
         }
     }
     return state;
 }
 
 export function removeResource(state, playerId, resource, amount) {
-    if (state.hasIn(['playerData', playerId.toString()])) {
-        if (resource && resource.length > 0 && !(amount < 0)) {
-            if (getResource(state, playerId, resource) <= amount) {
-                state = state.removeIn(['resources', playerId.toString(), resource]);
-                if (state.getIn(['resources', playerId.toString()], Map()).count() === 0) {
-                    state = state.removeIn(['resources', playerId.toString()]);
-                    if (state.get('resources').count() === 0) {
-                        state = state.remove('resources');
-                    }
+    if (resource !== undefined && !(amount !== undefined && amount < 0)) {
+        if (amount === undefined || getResource(state, playerId, resource) <= amount) {
+            state = state.removeIn(['resources', playerId.toString(), resource]);
+            if (state.getIn(['resources', playerId.toString()], Map()).count() === 0) {
+                state = state.removeIn(['resources', playerId.toString()]);
+                if (state.get('resources', Map()).count() === 0) {
+                    state = state.remove('resources');
                 }
-            } else {
-                state = state.setIn(['resources', playerId.toString(), resource],
-                    getResource(state, playerId, resource) - amount);
             }
+        } else {
+            state = state.setIn(['resources', playerId.toString(), resource],
+                getResource(state, playerId, resource) - amount);
         }
     }
     return state;
