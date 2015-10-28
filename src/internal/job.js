@@ -2,12 +2,17 @@
  * Created by Eddie on 10/18/2015.
  */
 
+import {getWorker} from './worker';
+
 export function setJob(state, playerId, workerId, job) {
-    if (isQualifiedForJob(state, playerId, workerId, job)) {
-        return state.setIn(['workers', playerId.toString(), workerId.toString(), 'job'], job);
-    } else {
-        return state;
+    if (workerId !== undefined && getWorker(state, playerId, workerId)) {
+        if (job === undefined) {
+            state = state.removeIn(['workers', playerId.toString(), workerId.toString(), 'job']);
+        } else {
+            state = state.setIn(['workers', playerId.toString(), workerId.toString(), 'job'], job);
+        }
     }
+    return state;
 }
 
 export function getJob(state, playerId, workerId) {
@@ -15,7 +20,7 @@ export function getJob(state, playerId, workerId) {
 }
 
 export function removeJob(state, playerId, workerId) {
-    if (state.hasIn(['workers', playerId.toString(), workerId.toString()])) {
+    if (getWorker(state, playerId, workerId)) {
         return state.removeIn(['workers', playerId.toString(), workerId.toString(), 'job']);
     } else {
         return state;
@@ -23,7 +28,7 @@ export function removeJob(state, playerId, workerId) {
 }
 
 export function isQualifiedForJob(state, playerId, workerId, job) {
-    if (job && job.length > 0) {
+    if (workerId !== undefined && getWorker(state, playerId, workerId) && job !== undefined) {
         return state.hasIn(['workers', playerId.toString(), workerId.toString()]);
     }
     return false;
