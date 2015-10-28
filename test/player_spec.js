@@ -18,8 +18,8 @@ describe('Player Operations', () => {
                 });
                 const nextState = setPlayer(initialState, player);
                 expect(nextState).to.equal(fromJS({
-                    latestPlayerId: 1,
                     players: {
+                        latestPlayerId: 1,
                         'Eddie': '1'
                     },
                     playerData: {
@@ -29,8 +29,8 @@ describe('Player Operations', () => {
             });
             it('when no playerId is provided, the username is unique, and there is a player list', () => {
                 const initialState = fromJS({
-                    latestPlayerId: 3,
                     players: {
+                        latestPlayerId: 3,
                         'Eddie': '1',
                         'Rob': '3'
                     },
@@ -44,8 +44,8 @@ describe('Player Operations', () => {
                 });
                 const nextState = setPlayer(initialState, player);
                 expect(nextState).to.equal(fromJS({
-                    latestPlayerId: 4,
                     players: {
+                        latestPlayerId: 4,
                         'Eddie': '1',
                         'Rob': '3',
                         'Logan': '4'
@@ -59,8 +59,8 @@ describe('Player Operations', () => {
             });
             it('when no playerId is provided, the username is unique, and there is additional player data', () => {
                 const initialState = fromJS({
-                    latestPlayerId: 3,
                     players: {
+                        latestPlayerId: 3,
                         'Eddie': '1',
                         'Rob': '3'
                     },
@@ -75,8 +75,8 @@ describe('Player Operations', () => {
                 });
                 const nextState = setPlayer(initialState, player);
                 expect(nextState).to.equal(fromJS({
-                    latestPlayerId: 4,
                     players: {
+                        latestPlayerId: 4,
                         'Eddie': '1',
                         'Rob': '3',
                         'Logan': '4'
@@ -91,8 +91,8 @@ describe('Player Operations', () => {
             });
             it('when no playerId is provided, the username is unique, and the update bool is set to true', () => {
                 const initialState = fromJS({
-                    latestPlayerId: 3,
                     players: {
+                        latestPlayerId: 3,
                         'Eddie': '1',
                         'Rob': '3'
                     },
@@ -107,8 +107,8 @@ describe('Player Operations', () => {
                 });
                 const nextState = setPlayer(initialState, player, true);
                 expect(nextState).to.equal(fromJS({
-                    latestPlayerId: 4,
                     players: {
+                        latestPlayerId: 4,
                         'Eddie': '1',
                         'Rob': '3',
                         'Logan': '4'
@@ -125,8 +125,8 @@ describe('Player Operations', () => {
         describe('updates player data other than the username', () => {
             it('when the playerId is specified (and exists) without a provided username and update is true', () => {
                 const initialState = fromJS({
-                    latestPlayerId: 3,
                     players: {
+                        latestPlayerId: 3,
                         'Eddie': '1',
                         'Rob': '3'
                     },
@@ -142,8 +142,8 @@ describe('Player Operations', () => {
                 });
                 const nextState = setPlayer(initialState, player, true);
                 expect(nextState).to.equal(fromJS({
-                    latestPlayerId: 3,
                     players: {
+                        latestPlayerId: 3,
                         'Eddie': '1',
                         'Rob': '3'
                     },
@@ -155,8 +155,8 @@ describe('Player Operations', () => {
             });
             it('when the playerId is specified (and exists) with any provided username and update is true', () => {
                 const initialState = fromJS({
-                    latestPlayerId: 3,
                     players: {
+                        latestPlayerId: 3,
                         'Eddie': '1',
                         'Rob': '3'
                     },
@@ -172,8 +172,8 @@ describe('Player Operations', () => {
                 });
                 const nextState = setPlayer(initialState, player, true);
                 expect(nextState).to.equal(fromJS({
-                    latestPlayerId: 3,
                     players: {
+                        latestPlayerId: 3,
                         'Eddie': '1',
                         'Rob': '3'
                     },
@@ -185,8 +185,8 @@ describe('Player Operations', () => {
             });
             it('when the playerId is specified as a number (and exists) and update is true', () => {
                 const initialState = fromJS({
-                    latestPlayerId: 3,
                     players: {
+                        latestPlayerId: 3,
                         'Eddie': '1',
                         'Rob': '3'
                     },
@@ -202,8 +202,8 @@ describe('Player Operations', () => {
                 });
                 const nextState = setPlayer(initialState, player, true);
                 expect(nextState).to.equal(fromJS({
-                    latestPlayerId: 3,
                     players: {
+                        latestPlayerId: 3,
                         'Eddie': '1',
                         'Rob': '3'
                     },
@@ -217,8 +217,8 @@ describe('Player Operations', () => {
         describe('replaces player data other than the username', () => {
             it('when the playerId is specified (and exists) without a provided username and update is false', () => {
                 const initialState = fromJS({
-                    latestPlayerId: 3,
                     players: {
+                        latestPlayerId: 3,
                         'Eddie': '1',
                         'Rob': '3'
                     },
@@ -234,8 +234,8 @@ describe('Player Operations', () => {
                 });
                 const nextState = setPlayer(initialState, player, false);
                 expect(nextState).to.equal(fromJS({
-                    latestPlayerId: 3,
                     players: {
+                        latestPlayerId: 3,
                         'Eddie': '1',
                         'Rob': '3'
                     },
@@ -247,8 +247,8 @@ describe('Player Operations', () => {
             });
             it('when the playerId is specified (and exists) with any provided username and update is false', () => {
                 const initialState = fromJS({
-                    latestPlayerId: 3,
                     players: {
+                        latestPlayerId: 3,
                         'Eddie': '1',
                         'Rob': '3'
                     },
@@ -264,8 +264,8 @@ describe('Player Operations', () => {
                 });
                 const nextState = setPlayer(initialState, player, false);
                 expect(nextState).to.equal(fromJS({
-                    latestPlayerId: 3,
                     players: {
+                        latestPlayerId: 3,
                         'Eddie': '1',
                         'Rob': '3'
                     },
@@ -277,8 +277,8 @@ describe('Player Operations', () => {
             });
             it('when the playerId is specified (and exists) as a number instead of a string and update is false', () => {
                 const initialState = fromJS({
-                    latestPlayerId: 3,
                     players: {
+                        latestPlayerId: 3,
                         'Eddie': '1',
                         'Rob': '3'
                     },
@@ -294,8 +294,8 @@ describe('Player Operations', () => {
                 });
                 const nextState = setPlayer(initialState, player, false);
                 expect(nextState).to.equal(fromJS({
-                    latestPlayerId: 3,
                     players: {
+                        latestPlayerId: 3,
                         'Eddie': '1',
                         'Rob': '3'
                     },
@@ -310,6 +310,7 @@ describe('Player Operations', () => {
             it('if the playerId is specified, but does not exist', () => {
                 const initialState = fromJS({
                     players: {
+                        latestPlayerId: 2,
                         'Eddie': '1',
                         'Rob': '2'
                     },
@@ -326,6 +327,7 @@ describe('Player Operations', () => {
                 const nextState = setPlayer(initialState, player);
                 expect(nextState).to.equal(fromJS({
                     players: {
+                        latestPlayerId: 2,
                         'Eddie': '1',
                         'Rob': '2'
                     },
@@ -338,6 +340,7 @@ describe('Player Operations', () => {
             it('if the playerId is not specified and the username exists', () => {
                 const initialState = fromJS({
                     players: {
+                        latestPlayerId: 2,
                         'Eddie': '1',
                         'Rob': '2'
                     },
@@ -352,6 +355,7 @@ describe('Player Operations', () => {
                 const nextState = setPlayer(initialState, player);
                 expect(nextState).to.equal(fromJS({
                     players: {
+                        latestPlayerId: 2,
                         'Eddie': '1',
                         'Rob': '2'
                     },
@@ -366,8 +370,8 @@ describe('Player Operations', () => {
     describe('getPlayer', () => {
         it('retrieves an existing player that corresponds to the playerId', () => {
             const initialState = fromJS({
-                latestPlayerId: 3,
                 players: {
+                    latestPlayerId: 3,
                     'Eddie': 1,
                     'Rob': 3
                 },
@@ -385,8 +389,8 @@ describe('Player Operations', () => {
         });
         it('returns undefined when the playerId does not exist', () => {
             const initialState = fromJS({
-                latestPlayerId: 3,
                 players: {
+                    latestPlayerId: 3,
                     'Eddie': 1,
                     'Rob': 3
                 },
@@ -404,8 +408,8 @@ describe('Player Operations', () => {
     describe('updatePlayer (alias for setPlayer(*, *, true))', () => {
         it('replaces overlapping specified fields and adds new data', () => {
             const initialState = fromJS({
-                latestPlayerId: 3,
                 players: {
+                    latestPlayerId: 3,
                     'Eddie': '1',
                     'Rob': '3'
                 },
@@ -421,8 +425,8 @@ describe('Player Operations', () => {
             });
             const nextState = updatePlayer(initialState, player);
             expect(nextState).to.equal(fromJS({
-                latestPlayerId: 3,
                 players: {
+                    latestPlayerId: 3,
                     'Eddie': '1',
                     'Rob': '3'
                 },
@@ -434,8 +438,8 @@ describe('Player Operations', () => {
         });
         it('merges with pre-existing fields that are not specified', () => {
             const initialState = fromJS({
-                latestPlayerId: 3,
                 players: {
+                    latestPlayerId: 3,
                     'Eddie': '1',
                     'Rob': '3'
                 },
@@ -451,8 +455,8 @@ describe('Player Operations', () => {
             });
             const nextState = updatePlayer(initialState, player);
             expect(nextState).to.equal(fromJS({
-                latestPlayerId: 3,
                 players: {
+                    latestPlayerId: 3,
                     'Eddie': '1',
                     'Rob': '3'
                 },
