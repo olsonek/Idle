@@ -4,7 +4,7 @@
 import {expect} from 'chai';
 import {List, Map, fromJS} from 'immutable';
 
-import {getWorkers, removeWorkers, setWorkers} from '../../src/worker';
+import {getWorkers, removeWorkers, setWorkers} from '../../src/internal/worker';
 
 describe('Batch Worker Operations', () => {
     // TODO: Write tests for validating latestWorkerId

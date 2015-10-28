@@ -4,7 +4,7 @@
 import {expect} from 'chai';
 import {List, Map, fromJS} from 'immutable';
 
-import {getPlayer, setPlayer, updatePlayer} from '../src/player';
+import {getPlayer, setPlayer, updatePlayer} from '../src/internal/player';
 
 describe('Player Operations', () => {
     // TODO: Write tests to validate latestPlayerId

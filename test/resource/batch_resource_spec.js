@@ -4,7 +4,7 @@
 import {expect} from 'chai';
 import {List, Map, fromJS} from 'immutable';
 
-import {addResources, getResources, hasResources, removeResources, setResources} from '../../src/resource';
+import {addResources, getResources, hasResources, removeResources, setResources} from '../../src/internal/resource';
 
 describe('Batch Resource Operations', () => {
     // TODO: Add a map between a resource type and its unit of measurement

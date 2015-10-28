@@ -4,7 +4,7 @@
 import {expect} from 'chai';
 import {List, Map, fromJS} from 'immutable';
 
-import {getJob, setJob, removeJob, isQualifiedForJob} from '../src/job';
+import {getJob, setJob, removeJob, isQualifiedForJob} from '../src/internal/job';
 
 describe('Job Operations', () => {
     // TODO: Implement a system for determining accumulated job experience (e.g. experience and levels)
