@@ -6,27 +6,41 @@ import {List, Map, Set, fromJS} from 'immutable';
 import {removeTask} from './task';
 
 export function setWorkers(state, playerId, workers) {
-    if (state.hasIn(['playerData', playerId.toString()])) {//player exists
-        var latestWorkerId = 0;
-        workers.keySeq().some(function (workerId) {//calculate new latestWorkerId
-            if (Number(workerId) > latestWorkerId) {
-                latestWorkerId = Number(workerId);
-            }
-            return false;
-        });
-        return state.setIn(['playerData', playerId.toString(), 'latestWorkerId'], latestWorkerId)
-            .setIn(['workers', playerId.toString()], workers);
-    } else {//player does not exist
-        return state;
+    if (!(workers) || workers === Map()) {
+        return removeWorkers(state, playerId);
     }
+    var latestWorkerId = 0;
+    workers.keySeq().some(function (workerId) {//calculate new latestWorkerId
+        if (Number(workerId) > latestWorkerId) {
+            latestWorkerId = Number(workerId);
+        }
+        return false;
+    });
+    workers = workers.set('latestWorkerId', latestWorkerId);
+    return state.setIn(['workers', playerId.toString()], workers);
+}
+
+export function removeWorkers(state, playerId) {
+    state = state.removeIn(['workers', playerId.toString()]);
+    if (state.get('workers', List()).count() === 0) {// if no playerIds are associated with workers
+        state = state.remove('workers');
+    }
+    return state;
 }
 
 export function getWorkers(state, playerId) {
-    return state.getIn(['workers', playerId.toString()], undefined);
+    if (state.hasIn(['workers', playerId.toString()])) {
+        return state.getIn(['workers', playerId.toString()]).remove('latestWorkerId');
+    } else {
+        return undefined;
+    }
 }
 
 export function setWorker(state, playerId, worker, update = false) {
     if (worker.has('workerId')) {//update worker
+        if (!update && worker.remove('workerId') === Map()) {
+            return removeWorker(state, playerId, worker.get('workerId'));
+        }
         if (state.hasIn(['workers', playerId.toString(), worker.get('workerId').toString()])) {//playerId is associated with worker
             if (update) {
                 return state.mergeDeepIn(['workers', playerId.toString(),

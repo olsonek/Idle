@@ -136,6 +136,27 @@ describe('Individual Worker Operations', () => {
                 }));
             });
         });
+        describe('removes the worker', () => {
+            it('if the workerId is specified, the worker has no other information, and update = false', () => {
+                const initialState = fromJS({
+                    workers: {
+                        1: {latestWorkerId: 4, 3: {name: 'Bob'}, 4: {name: 'Bob', job: 'Builder'}},
+                        3: {latestWorkerId: 2, 1: {name: 'Tonk'}, 2: {name: 'Alice'}}
+                    }
+                });
+                const playerId = '1';
+                const worker = fromJS({
+                    workerId: '4'
+                });
+                const nextState = setWorker(initialState, playerId, worker, false);
+                expect(nextState).to.equal(fromJS({
+                    workers: {
+                        1: {latestWorkerId: 4, 3: {name: 'Bob'}},
+                        3: {latestWorkerId: 2, 1: {name: 'Tonk'}, 2: {name: 'Alice'}}
+                    }
+                }));
+            });
+        });
         describe('does nothing', () => {
             it('if the workerId is specified, but the playerId does not have associated workers', () => {
                 const initialState = fromJS({
