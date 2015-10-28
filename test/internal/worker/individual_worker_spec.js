@@ -4,7 +4,7 @@
 import {expect} from 'chai';
 import {List, Map, fromJS} from 'immutable';
 
-import {getWorker, setWorker, updateWorker, removeWorker} from '../../src/internal/worker';
+import {getWorker, setWorker, updateWorker, removeWorker} from '../../../src/internal/worker';
 
 describe('Individual Worker Operations', () => {
     describe('setWorker', () => {
