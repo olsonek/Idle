@@ -6,6 +6,7 @@
 // TODO: Add state that manages industry bonuses
 // TODO: Add state that maps tasks to jobs
 // TODO: Add state that maps players to settings
+// TODO: Add a map between a resource type and its unit of measurement
 
 const serverState =
 {
