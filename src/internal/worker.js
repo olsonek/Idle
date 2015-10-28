@@ -6,6 +6,7 @@ import {List, Map, Set, fromJS} from 'immutable';
 import {removeTask} from './task';
 
 // TODO: Add methods for operating on specific worker attributes
+// TODO: Adjust everything that manipulates worker state to use those methods
 
 export function setWorkers(state, playerId, workers) {
     if (!(workers) || workers === Map()) {
