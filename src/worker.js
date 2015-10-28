@@ -26,22 +26,20 @@ export function getWorkers(state, playerId) {
 }
 
 export function setWorker(state, playerId, worker, update = false) {
-    if (state.hasIn(['playerData', playerId.toString()])) {//player exists
-        if (worker.has('workerId')) {//update worker
-            if (state.hasIn(['workers', playerId.toString(), worker.get('workerId').toString()])) {//worker exists
-                if (update) {
-                    return state.mergeDeepIn(['workers', playerId.toString(),
-                        worker.get('workerId').toString()], worker.remove('workerId'));
-                } else {
-                    return state.setIn(['workers', playerId.toString(),
-                        worker.get('workerId').toString()], worker.remove('workerId'));
-                }
+    if (worker.has('workerId')) {//update worker
+        if (state.hasIn(['workers', playerId.toString(), worker.get('workerId').toString()])) {//playerId is associated with worker
+            if (update) {
+                return state.mergeDeepIn(['workers', playerId.toString(),
+                    worker.get('workerId').toString()], worker.remove('workerId'));
+            } else {
+                return state.setIn(['workers', playerId.toString(),
+                    worker.get('workerId').toString()], worker.remove('workerId'));
             }
-        } else if (worker) {//create a new worker if defined
-            var newWorkerId = Number(state.getIn(['playerData', playerId.toString(), 'latestWorkerId'], 0)) + 1;
-            return state.setIn(['playerData', playerId.toString(), 'latestWorkerId'], newWorkerId)
-                .setIn(['workers', playerId.toString(), newWorkerId.toString()], worker);
         }
+    } else if (worker) {//create a new worker if defined
+        var newWorkerId = Number(state.getIn(['workers', playerId.toString(), 'latestWorkerId'], 0)) + 1;
+        return state.setIn(['workers', playerId.toString(), 'latestWorkerId'], newWorkerId)
+            .setIn(['workers', playerId.toString(), newWorkerId.toString()], worker);
     }
     return state;
 }
@@ -56,12 +54,12 @@ export function updateWorker(state, playerId, worker) {
 
 export function removeWorker(state, playerId, workerId) {
     if (state.hasIn(['workers', playerId.toString(), workerId.toString()])) {
-        state = removeTask(state, playerId, workerId);
         state = state.removeIn(['workers', playerId.toString(), workerId.toString()]);
         if (state.hasIn(['workers', playerId.toString()]) &&
-            state.getIn(['workers', playerId.toString()]).count() === 0) {// if player has no workers
+            state.getIn(['workers', playerId.toString()]).count() <= 1) {
+            // if player has no workers (may have latestWorkerId entry still)
             state = state.removeIn(['workers', playerId.toString()]);
-            if (state.get('workers', List()).count() === 0) {// if no workers exist
+            if (state.get('workers', List()).count() === 0) {// if no playerIds are associated with workers
                 state = state.remove('workers');
             }
         }
